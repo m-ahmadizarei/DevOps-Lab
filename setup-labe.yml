@@ -1,0 +1,6 @@
+---
+- hosts: all
+  name: setup-lab
+  roles:
+# setup-lab
+    - { role: setup_lab , become: True , tags: setup-lab }

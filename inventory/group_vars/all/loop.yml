@@ -1,0 +1,157 @@
+# loop data
+loop_list:
+  - State: present
+    Type: student
+    StudentID: 0
+    Target_IP: 192.168.100.100
+    Firewall_SSHPort: 7100
+    Dns_Subdomain: st0
+    StudentUserName: st0
+    StudentPass: "{{ student_pass_0 }}"
+    StudentName: Mohammadali
+    StudentLastName: Ahmadizarei
+    StudentEmail: m.ahmadizarei@gmail.com
+    Nginx_Conf_File: student_0
+    MinioBucket: bucket-term12
+
+  - State: present
+    Type: student
+    StudentID: 1
+    Target_IP: 192.168.100.101
+    Firewall_SSHPort: 7101
+    Dns_Subdomain: st1
+    StudentUserName: st1
+    StudentPass: "{{ student_pass_1 }}"
+    StudentName: Student1
+    StudentLastName: Student1
+    StudentEmail: student1@gmail.com
+    Nginx_Conf_File: student_1
+    MinioBucket: bucket-term1
+
+  - State: present
+    Type: student
+    StudentID: 2
+    Target_IP: 192.168.100.102
+    Firewall_SSHPort: 7102
+    Dns_Subdomain: st2
+    StudentUserName: st2
+    StudentPass: "{{ student_pass_2 }}"
+    StudentName: Student2
+    StudentLastName: Student2
+    StudentEmail: student2@gmail.com
+    Nginx_Conf_File: student_2
+    MinioBucket: bucket-term1
+
+  - State: present
+    Type: student
+    StudentID: 3
+    Target_IP: 192.168.100.103
+    Firewall_SSHPort: 7103
+    Dns_Subdomain: st3
+    StudentUserName: st3
+    StudentPass: "{{ student_pass_3 }}"
+    StudentName: Student3
+    StudentLastName: Student3
+    StudentEmail: student3@gmail.com
+    Nginx_Conf_File: student_3
+    MinioBucket: bucket-term1
+
+  - State: present
+    Type: student
+    StudentID: 4
+    Target_IP: 192.168.100.104
+    Firewall_SSHPort: 7104
+    Dns_Subdomain: st4
+    StudentUserName: st4
+    StudentPass: "{{ student_pass_4 }}"
+    StudentName: Student4
+    StudentLastName: Student4
+    StudentEmail: student4@gmail.com
+    Nginx_Conf_File: student_4
+    MinioBucket: bucket-term1
+
+  - State: present
+    Type: student
+    StudentID: 5
+    Target_IP: 192.168.100.105
+    Firewall_SSHPort: 7105
+    Dns_Subdomain: st5
+    StudentUserName: st5
+    StudentPass: "{{ student_pass_5 }}"
+    StudentName: Student5
+    StudentLastName: Student5
+    StudentEmail: student5@gmail.com
+    Nginx_Conf_File: student_5
+    MinioBucket: bucket-term2
+
+  - State: present
+    Type: student
+    StudentID: 6
+    Target_IP: 192.168.100.106
+    Firewall_SSHPort: 7106
+    Dns_Subdomain: st6
+    StudentUserName: st6
+    StudentPass: "{{ student_pass_6 }}"
+    StudentName: Student6
+    StudentLastName: Student6
+    StudentEmail: student6@gmail.com
+    Nginx_Conf_File: student_6
+    MinioBucket: bucket-term2
+
+  - State: present
+    Type: student
+    StudentID: 7
+    Target_IP: 192.168.100.107
+    Firewall_SSHPort: 7107
+    Dns_Subdomain: st7
+    StudentUserName: st7
+    StudentPass: "{{ student_pass_7 }}"
+    StudentName: Student7
+    StudentLastName: Student7
+    StudentEmail: student7@gmail.com
+    Nginx_Conf_File: student_7
+    MinioBucket: bucket-term2
+
+  - State: present
+    Type: student
+    StudentID: 8
+    Target_IP: 192.168.100.108
+    Firewall_SSHPort: 7108
+    Dns_Subdomain: st8
+    StudentUserName: st8
+    StudentPass: "{{ student_pass_8 }}"
+    StudentName: Student8
+    StudentLastName: Student8
+    StudentEmail: student8@gmail.com
+    Nginx_Conf_File: student_8
+    MinioBucket: bucket-term2
+
+  - State: present
+    Type: student
+    StudentID: 9
+    Target_IP: 192.168.100.109
+    Firewall_SSHPort: 7109
+    Dns_Subdomain: st9
+    StudentUserName: st9
+    StudentPass: "{{ student_pass_9 }}"
+    StudentName: Student9
+    StudentLastName: Student9
+    StudentEmail: student9@gmail.com
+    Nginx_Conf_File: student_9
+    MinioBucket: bucket-term2
+
+  - State: present
+    Type: student
+    StudentID: 10
+    Target_IP: 192.168.100.110
+    Firewall_SSHPort: 7110
+    Dns_Subdomain: st10
+    StudentUserName: st10
+    StudentPass: "{{ student_pass_10 }}"
+    StudentName: Student10
+    StudentLastName: Student10
+    StudentEmail: student10@gmail.com
+    Nginx_Conf_File: student_10
+    MinioBucket: bucket-term2
+
+# ...

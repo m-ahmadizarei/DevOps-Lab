@@ -1,0 +1,16 @@
+
+# directory path
+keycloak_dir: "{{ main_dir }}/keycloak"
+
+# domain name
+domain_name: maaz.ir
+keycloak_consul_sub: login.lab
+
+# keycloak
+keycloak_admin_username: admin
+keycloak_url: "https://{{ keycloak_consul_sub }}.{{ domain_name }}"
+keycloak_hostname: "{{{ keycloak_consul_sub }}.{{ domain_name }}"
+keycloak_admin_realm: master
+realm_name: minio
+
+

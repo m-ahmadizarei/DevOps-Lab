@@ -1,0 +1,32 @@
+---
+- hosts: student17
+  name: delete vms
+  become: true
+  gather_facts: false
+  roles:
+# Delete VM
+    - { role: delete_vms , become: True , tags: delete-vms }
+
+- hosts: labe-lab
+  name:  setup lab
+  become: true
+  gather_facts: false
+  vars:
+    loop_list:
+      - State: absent
+        Type: student
+        StudentID: 17
+        Target_IP: 192.168.100.117
+        Firewall_SSHPort: 7117
+        Dns_Subdomain: st17
+        StudentUserName: st17
+        StudentPass: "{{ student_pass_17 }}"
+        StudentName: Bill
+        StudentLastName: Gates
+        StudentEmail: billgates@gmail.com
+        Nginx_Conf_File: student_17
+        MinioBucket: bucket-term2
+  roles:
+# Off board
+    - { role: setup_lab , become: True , tags: setup-lab }
+    - { role: keycloak , become: True , tags: keycloak }

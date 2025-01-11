@@ -1,0 +1,35 @@
+---
+- name: Create a keycloak studen accounts
+  community.general.keycloak_user:
+    auth_keycloak_url: "{{ keycloak_url }}"
+    auth_username: admin
+    auth_password: "{{ keycloak_admin_pass }}"
+    auth_realm: master
+    realm: DevOps-Lab_Realm
+    username: "{{ item.StudentUserName }}"
+    firstName: "{{ item.StudentName }}"
+    lastName: "{{ item.StudentLastName }}"
+    email: "{{ item.StudentEmail }}"
+    enabled: "{{ 'true' if item.State == 'present' else 'false' }}"
+    emailVerified: false
+    credentials:
+        - type: password
+          value: "{{ item.StudentPass }}"
+          temporary: false
+#    attributes:
+#        - name: attr1
+#          values:
+#            - value1
+#          state: present
+#        - name: attr2
+#          values:
+#            - value2
+#          state: absent
+    groups:
+        - name: "{{ item.MinioBucket }}" # group name in keycloak same as minio policy name
+          state: present
+    state: present
+  # when: "{{ item.State  == 'present' }}"
+  loop: "{{ loop_list }}"
+  loop_control:
+    loop_var: item

@@ -1,0 +1,39 @@
+---
+- name: create student user
+  user:
+    name: "st{{ Client_Id }}"
+    expires: -1
+    shell: /bin/bash
+    create_home: yes
+
+- name: add to sudoer without password
+  template:
+    src: sudoers.conf.j2
+    dest: "/etc/sudoers.d/st{{ Client_Id }}"
+    mode: 644
+
+- name: create .ssh dir
+  file:
+    path: "/home/st{{ Client_Id }}/.ssh"
+    state: directory
+    owner: st{{ Client_Id }}
+    group: st{{ Client_Id }}
+    mode: og-rwx
+
+# - name: Copy a "authorized_keys" file on the remote machine for ssh
+#   ansible.builtin.copy:
+#     src: /root/.ssh/authorized_keys
+#     dest: "/home/st{{ Client_Id }}/.ssh/authorized_keys"
+#     remote_src: yes
+
+- name: Remove the user 'student'
+  ansible.builtin.user:
+    name: "{{ default_template_user }}"
+    state: absent
+    remove: yes
+
+- name: Make sshd configuration file.
+  template:
+    src: sshd_config.j2
+    dest: /etc/ssh/sshd_config
+  notify: Restart ssh

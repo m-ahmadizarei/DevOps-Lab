@@ -1,0 +1,18 @@
+---
+- name: Update for system defaults config.
+  community.vmware.vmware_host_auto_start:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    esxi_hostname: "{{ ESXI_IP }}"
+    validate_certs: no
+    system_defaults:
+      enabled: true
+      start_delay: 100
+      stop_action: guestShutdown
+  delegate_to: localhost
+  register: auto_start_config
+  retries: 10
+  delay: 10
+  until: auto_start_config.changed == false
+  become: no

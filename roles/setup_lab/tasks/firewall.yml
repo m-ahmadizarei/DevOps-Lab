@@ -1,0 +1,29 @@
+---
+- name: Install basic tools
+  apt:
+    name: "{{ packages }}"
+    state: present
+    force_apt_get: yes
+    update_cache: yes
+
+- name: Enable IP forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    state: present
+    sysctl_set: yes
+
+- name: Append DNAT rule above POSTROUTING MASQUERADE in /etc/iptables/rules.v4
+  ansible.builtin.lineinfile:
+    path: /etc/iptables/rules.v4
+    line: "-A PREROUTING -p tcp --dport {{ item.Firewall_SSHPort }} -j DNAT --to-destination {{ item.Target_IP }}:{{ ansible_port }}"
+    insertbefore: "^-A POSTROUTING -j MASQUERADE"
+    state: "{{ item.State }}"
+  loop: "{{ loop_list }}"
+
+- name: restore iptables state from a file
+  community.general.iptables_state:
+    state: restored
+    path: /etc/iptables/rules.v4
+    noflush: true
+  notify: Restart iptables

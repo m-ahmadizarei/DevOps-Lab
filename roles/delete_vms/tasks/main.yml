@@ -1,0 +1,23 @@
+- name: delete {{ inventory_hostname }} nodes
+  vmware_guest:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: no
+    datacenter: "{{ vmware_datacenter_name }}"
+    esxi_hostname: "{{ ESXI_IP }}"
+    folder: "{{ VM_Folder }}"
+    name: "{{ inventory_hostname }}"
+    state: absent
+    force: yes
+    state_change_timeout: 200
+  when:
+    - Client_State == 'absent'
+  delegate_to: localhost
+
+- name: Delete a {{ inventory_hostname }} from the ssh configuration file
+  community.general.ssh_config:
+    user : "{{ lookup('env', 'USER') }}"
+    host: "{{ inventory_hostname }}"
+    state: absent
+  delegate_to: localhost

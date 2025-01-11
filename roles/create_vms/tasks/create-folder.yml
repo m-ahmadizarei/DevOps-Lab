@@ -1,0 +1,13 @@
+---
+- name: Create a VM folder on given datacenter
+  community.vmware.vcenter_folder:
+    hostname: '{{ vcenter_hostname }}'
+    username: '{{ vcenter_username }}'
+    password: '{{ vcenter_password }}'
+    validate_certs: no
+    datacenter_name: "{{ vmware_datacenter_name }}"
+    folder_name: "{{ VM_Folder }}"
+    folder_type: vm
+    state: present
+  register: vm_folder_creation_result
+  delegate_to: localhost

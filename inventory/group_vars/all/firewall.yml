@@ -1,0 +1,18 @@
+# basic package list for installation
+packages:
+  - iptables
+  - iptables-persistent
+# iptables configuration
+iptables:
+  network_adapter_access:
+    - lo
+    - app_net
+    - web_net
+  tcp_port_access:
+    - 80
+    - 443
+  #udp_port_access:
+  trusted_IP:
+    - 1.2.3.4
+  trusted_Range:
+    - 10.60.10.0/24

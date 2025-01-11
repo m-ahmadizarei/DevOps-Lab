@@ -1,0 +1,13 @@
+---
+- name: Add a host in the configuration
+  community.general.ssh_config:
+    remote_user : "{{ ansible_user }}"
+    user : "{{ lookup('env', 'USER') }}"
+    host: "{{ inventory_hostname }}"
+    hostname: "{{ VM_Public_IP }}"
+    port: "{{ ansible_port }}"
+    proxycommand: "{{ ProxyJumpTarget }}"
+    strict_host_key_checking: "no"
+    state: present
+  delegate_to: localhost
+  throttle: 1

@@ -1,0 +1,15 @@
+# General vars
+default_template_user: student
+public_network: local
+private_network: local
+public_ip_netmask: 255.255.255.0
+public_ip_gateway: 192.168.100.1
+vmware_datacenter_name: DevOps-Labs
+vcenter_template_name: Debian12
+ESXI_IP: esxi.maaz.ir
+vcenter_hostname: "{{ VCENTER_HOSTNAME }}"
+vcenter_username: "{{ VCENTER_USERNAME }}"
+vcenter_password: "{{ VCENTER_PASSWORD }}"
+
+# pip
+PIP_REPOSITORY_DOMAIN: repo.maaz.ir

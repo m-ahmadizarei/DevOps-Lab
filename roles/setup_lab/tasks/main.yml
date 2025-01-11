@@ -1,0 +1,21 @@
+---
+# tasks file for ./DevOps-Lab/roles/setup_lab
+- name: set or update dns records
+  import_tasks: dns_record.yml
+  tags: dns-record
+
+- name: config firewall and ssh port forward
+  import_tasks: firewall.yml
+  tags: firewall
+
+- name: acme
+  include_tasks: acme.yml
+  loop: "{{ loop_list }}"
+  loop_control:
+    loop_var: maaz
+  tags:
+    - acme
+
+- name: nginx config setup
+  import_tasks: nginx.yml
+  tags: nginx

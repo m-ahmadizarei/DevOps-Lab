@@ -1,0 +1,25 @@
+---
+- name: Set DNS Record
+  community.general.cloudflare_dns:
+    state: "{{ item.State }}"
+    api_token: "{{ CLOUDFLARE_API_TOKEN }}"
+    zone: "{{ DOMAIN_NAME }}"
+    record: "*.{{ item.Dns_Subdomain }}"
+    type: "A"
+    content: "{{ VM_LABE_IP }}"
+  when: "{{ item.Type  == 'student' }}"
+  loop: "{{ loop_list }}"
+  loop_control:
+    loop_var: item
+
+- name: Set DNS Record
+  community.general.cloudflare_dns:
+    state: "{{ item.State }}"
+    api_token: "{{ CLOUDFLARE_API_TOKEN }}"
+    zone: "{{ DOMAIN_NAME }}"
+    record: "{{ item.Dns_Subdomain }}"
+    type: "A"
+    content: "{{ VM_LABE_IP }}"
+  loop: "{{ loop_list }}"
+  loop_control:
+    loop_var: item

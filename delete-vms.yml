@@ -1,0 +1,8 @@
+---
+- hosts: all
+  name: delete vms
+  become: true
+  gather_facts: false
+  roles:
+# delete vm
+    - { role: delete_vms , become: True , tags: delete-vms }

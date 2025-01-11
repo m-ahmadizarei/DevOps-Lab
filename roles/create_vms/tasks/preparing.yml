@@ -1,0 +1,29 @@
+---
+- name: create pip configuration file if they don't exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0775"
+  loop:
+    - ~/.config/pip
+  delegate_to: localhost
+
+- name: copy template files | pip config
+  template:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    mode: "0644"
+  loop:
+    - { src: pip.conf.j2, dest: ~/.config/pip/pip.conf }
+  delegate_to: localhost
+
+- name: Install package with pip
+  ansible.builtin.pip:
+    name: '{{ item }}'
+  loop:
+    - pyVim
+    - PyVmomi
+    - stormssh
+  delegate_to: localhost

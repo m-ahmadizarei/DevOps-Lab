@@ -1,0 +1,52 @@
+---
+- hosts: student42,student13
+  name: create vms
+  become: true
+  gather_facts: false
+  vars:
+    VM_CPU: 2
+    VM_MEMORY: 4096
+    VM_STORAGE: 50
+    VM_Folder: students
+  roles:
+# Create VM
+    - { role: create_vms , become: True , tags: create-vms }
+
+- hosts: labe-lab
+  name:  setup lab
+  become: true
+  gather_facts: false
+  vars:
+    loop_list:
+      - State: present
+        Type: student
+        StudentID: 42
+        Target_IP: 192.168.100.142
+        Firewall_SSHPort: 7142
+        Dns_Subdomain: st42
+        StudentUserName: st42
+        StudentPass: "{{ student_pass_42 }}"
+        StudentName: Steve
+        StudentLastName: Jobs
+        StudentEmail: stevejobs@gmail.com
+        Nginx_Conf_File: student_42
+        MinioBucket: bucket-term1
+
+      - State: present
+        Type: student
+        StudentID: 13
+        Target_IP: 192.168.100.113
+        Firewall_SSHPort: 7113
+        Dns_Subdomain: st13
+        StudentUserName: st13
+        StudentPass: "{{ student_pass_13 }}"
+        StudentName: Elon
+        StudentLastName: Musk
+        StudentEmail: elonmusk@gmail.com
+        Nginx_Conf_File: student_13
+        MinioBucket: bucket-term12
+
+  roles:
+# On board
+    - { role: setup_lab , become: True , tags: setup-lab }
+    - { role: keycloak , become: True , tags: keycloak }

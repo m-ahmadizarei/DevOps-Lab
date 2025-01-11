@@ -1,0 +1,44 @@
+---
+- name: install pip packages and add ssh config file
+  import_tasks: preparing.yml
+  run_once: true
+  tags: preparing
+
+- name: create vm folders
+  import_tasks: create-folder.yml
+  tags: vm_folder
+
+- name: create ssh config
+  import_tasks: ssh-config.yml
+  tags: ssh_config
+
+- name: create vms
+  import_tasks: create-vms.yml
+  when:
+    - Client_State == 'present'
+  tags: create_vms
+
+- name: check vm status
+  import_tasks: check_status.yml
+  when:
+    - Client_State == 'present'
+  tags: check_status
+
+- name: lvm resize
+  import_tasks: lvm-resize.yml
+  when:
+    - Client_State == 'present'
+  tags: lvm_resize
+
+- name: auto start vms
+  import_tasks: auto-start.yml
+  when:
+    - Client_State == 'present'
+  tags: auto_start
+
+- name: create student user
+  import_tasks: create-user.yml
+  when:
+    - Client_State == 'present'
+    - inventory_hostname in groups["Lab-Students"]
+  tags: create_user

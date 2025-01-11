@@ -1,0 +1,44 @@
+---
+- name: Ensure nginx is installed
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: Start and enable nginx
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Copy nginx.conf to the server
+  copy:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Create ssl-dhparams.pem file
+  shell: openssl dhparam -out /opt/letsencrypt/ssl-dhparams.pem 2048
+  args:
+    creates: /opt/letsencrypt/ssl-dhparams.pem
+
+- name: Create NGINX config for students
+  template:
+    src: nginx-conf.j2
+    dest: /etc/nginx/conf.d/students/{{ item.Nginx_Conf_File }}.conf
+  with_items: "{{ loop_list }}"
+  when: item.State == 'present'
+
+- name: Remove NGINX config for absent students
+  file:
+    path: /etc/nginx/conf.d/students/{{ item.Nginx_Conf_File }}.conf
+    state: absent
+  with_items: "{{ loop_list }}"
+  when: item.State == 'absent'
+
+- name: Reload NGINX
+  service:
+    name: nginx
+    state: reloaded

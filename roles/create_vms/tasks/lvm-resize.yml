@@ -1,0 +1,43 @@
+---
+- name: Install parted
+  apt:
+    name: parted
+    state: present
+
+- name: "Read device information /dev/sda"
+  parted:
+    device: "/dev/sda"
+    unit: KiB
+  register: device_info
+
+- name: "Add new partition /dev/sda4"
+  parted:
+    device: "/dev/sda"
+    number: "4"
+    part_type: primary
+    flags: [ lvm ]
+    label: gpt
+    state: present
+    part_start: "{{ device_info.partitions[2].end + 1}}KiB"
+    part_end: "100%"
+
+- name: Create or resize a volume group on top of /dev/sda4
+  community.general.lvg:
+    vg: vg0
+    pvs: /dev/sda3,/dev/sda4
+
+- name: Extend the root logical volume to 25% apace.
+  community.general.lvol:
+    vg: vg0
+    lv: lv-root
+    size: +25%FREE
+    resizefs: true
+    force: yes
+
+- name: Extend the var logical volume to all apace.
+  community.general.lvol:
+    vg: vg0
+    lv: lv-var
+    size: +100%FREE
+    resizefs: true
+    force: yes

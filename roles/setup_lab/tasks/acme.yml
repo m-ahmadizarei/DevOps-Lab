@@ -1,0 +1,102 @@
+---
+- name: Create folder to store everything
+  file:
+    path: '/opt/letsencrypt'
+    state: directory
+    mode: 0700
+  tags:
+    - acme
+
+- name: Create Letsencrypt Account private key
+  openssl_privatekey:
+    path: '/opt/letsencrypt/letsencrypt.pem'
+  tags:
+    - acme
+
+- name: Certificate for each student
+  block:
+    - name: Create folder to store everything
+      file:
+        path: '/opt/letsencrypt/{{ maaz.Dns_Subdomain }}'
+        state: directory
+
+    - name: Create Domain Private Key
+      openssl_privatekey:
+        path: '/opt/letsencrypt/{{ maaz.Dns_Subdomain }}/{{ maaz.Dns_Subdomain }}.{{ DOMAIN_NAME }}.privkey.pem'
+
+    - name: Create Certificate Signing Request
+      openssl_csr:
+        path: '/opt/letsencrypt/{{ maaz.Dns_Subdomain }}/{{ maaz.Dns_Subdomain }}.{{ DOMAIN_NAME }}.csr'
+        privatekey_path: '/opt/letsencrypt/{{ maaz.Dns_Subdomain }}/{{ maaz.Dns_Subdomain }}.{{ DOMAIN_NAME }}.privkey.pem'
+        common_name: '{{ maaz.Dns_Subdomain }}.{{ DOMAIN_NAME }}'
+        subject_alt_name: "{{ item.value | map('regex_replace', '^', 'DNS:') | list }}"
+      with_dict:
+        dns_server:
+        - '{{ maaz.Dns_Subdomain }}.{{ DOMAIN_NAME }}'
+        - '*.{{ maaz.Dns_Subdomain }}.{{ DOMAIN_NAME }}'
+
+    - name: Create ACME Challenge
+      acme_certificate:
+        account_key_src: '/opt/letsencrypt/letsencrypt.pem'
+        acme_directory: 'https://acme-v02.api.letsencrypt.org/directory'
+        acme_version: 2
+        challenge: dns-01
+        csr: '/opt/letsencrypt/{{ maaz.Dns_Subdomain }}/{{ maaz.Dns_Subdomain }}.{{ DOMAIN_NAME }}.csr'
+        fullchain_dest: '/opt/letsencrypt/{{ maaz.Dns_Subdomain }}/{{ maaz.Dns_Subdomain }}.{{ DOMAIN_NAME }}.fullchain.pem'
+        terms_agreed: yes
+        remaining_days: 30
+      register: le_challenge
+
+    - name: Set DNS Record 
+      community.general.cloudflare_dns:
+        state: "present"
+        api_token: "{{ CLOUDFLARE_API_TOKEN }}"
+        zone: "{{ DOMAIN_NAME }}"
+        record: "{{ item['value']['dns-01']['resource'] }}.{{ maaz.Dns_Subdomain }}"
+        type: "TXT"
+        content: "{{ item['value']['dns-01']['resource_value'] }}"
+      when: le_challenge is changed
+      with_dict: "{{ le_challenge['challenge_data'] }}"
+
+    - name: Wait a bit to let DNS update
+      wait_for:
+        timeout: 30
+      when: le_challenge is changed
+
+    - name: Validate ACME Challenge
+      acme_certificate:
+        account_key_src: '/opt/letsencrypt/letsencrypt.pem'
+        acme_directory: 'https://acme-v02.api.letsencrypt.org/directory'
+        acme_version: 2
+        challenge: dns-01
+        csr: '/opt/letsencrypt/{{ maaz.Dns_Subdomain }}/{{ maaz.Dns_Subdomain }}.{{ DOMAIN_NAME }}.csr'
+        data: '{{ le_challenge }}'
+        fullchain_dest: '/opt/letsencrypt/{{ maaz.Dns_Subdomain }}/{{ maaz.Dns_Subdomain }}.{{ DOMAIN_NAME }}.fullchain.pem'
+        terms_agreed: yes
+        remaining_days: 30
+      when: le_challenge is changed
+
+    - name: Remove TXT record after validating
+      community.general.cloudflare_dns:
+        state: "absent"
+        api_token: "{{ CLOUDFLARE_API_TOKEN }}"
+        zone: "{{ DOMAIN_NAME }}"
+        record: "{{ item['value']['dns-01']['resource'] }}.{{ maaz.Dns_Subdomain }}"
+        type: "TXT"
+        content: "{{ item['value']['dns-01']['resource_value'] }}"
+      when: le_challenge is changed
+      with_dict: "{{ le_challenge['challenge_data'] }}"
+  when: maaz.State == "present"
+  tags:
+    - acme
+
+- name: Define list of files to delete for each student
+  block:
+  - name: Delete files for students marked as absent
+    file:
+      path: "/opt/letsencrypt/{{ maaz.Dns_Subdomain }}"
+      state: absent
+
+  when: maaz.State == "absent"
+  tags:
+    - acme

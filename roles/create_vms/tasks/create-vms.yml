@@ -1,0 +1,39 @@
+---
+- name: Create {{ inventory_hostname }} VM
+  community.vmware.vmware_guest:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: no
+    datacenter: "{{ vmware_datacenter_name }}"
+    esxi_hostname: "{{ ESXI_IP }}"
+    folder: "{{ VM_Folder }}"
+    name: "{{ inventory_hostname }}"
+    template: "{{ vcenter_template_name }}"
+    customization:
+      dns_servers:
+      - 8.8.8.8
+      - 1.1.1.1
+      hostname: "{{ inventory_hostname }}"
+    networks:
+    - name: "{{ public_network }}"
+      ip: "{{ VM_Public_IP }}"
+      netmask: "{{ public_ip_netmask }}"
+      gateway: "{{ public_ip_gateway }}"
+
+    hardware:
+      memory_mb: "{{ VM_MEMORY }}"
+      num_cpus: "{{ VM_CPU }}"
+      num_cpu_cores_per_socket: 1
+      hotadd_cpu: yes
+      memory_reservation_lock: yes
+      memory_reservation: "{{ VM_MEMORY }}"
+      hotadd_memory: yes
+      version: latest
+    disk:
+    - size_gb: "{{ VM_STORAGE }}"
+      datastore: "{{ DataStore_NAME }}"
+      type: thin
+    wait_for_ip_address: yes
+    state: poweredon
+  delegate_to: localhost
